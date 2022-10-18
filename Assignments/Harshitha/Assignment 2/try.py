@@ -2,12 +2,12 @@ from flask import Flask, render_template, redirect, url_for, request
 from flask_db2 import DB2
 
 app = Flask(__name__)
-app.config['DB2_DATABASE'] = 'sample'
+app.config['DB2_DATABASE'] = 'ibm'
 app.config['DB2_HOSTNAME'] = 'localhost'
 app.config['DB2_PORT'] = 25000
 app.config['DB2_PROTOCOL'] = 'TCPIP'
 app.config['DB2_USER'] = 'db2admin'
-app.config['DB2_PASSWORD'] = 'kavinraja'
+app.config['DB2_PASSWORD'] = 'db2wecwec'
 
 db = DB2(app)
 
@@ -33,8 +33,6 @@ def register():
             cur = db.connection.cursor()
             cur.execute('select * from user where username=\''+uname+'\' or email=\''+email+'\' or roll_number=\''+r_no+'\';')
             s=cur.fetchall()
-            print(s)
-            print('  cdddddddddddddddddddddddd')
             if(len(s)==0):
                 cheex=True
                 cheins=cur.execute('INSERT INTO user(email, username, roll_number, password) VALUES (\''+email+'\', \''+uname+'\','+r_no+', \''+passw+'\');')
@@ -45,7 +43,7 @@ def register():
             if not check:
                 error = 'ENTER ALL DATA.'
             elif not cheex:
-                error = 'DATA ALREADY exist.'
+                error = 'USER NAME ALREADY IN USE'
             else:
                 error = 'TRY AFTER SOME TIME'
     return render_template('index.html', error=error)
@@ -55,18 +53,15 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
-    print("fff")
     if request.method == 'POST':
         cur = db.connection.cursor()
         cur.execute('select * from user;');
-        #print(cur.execute('INSERT INTO user(email, username, roll_number, password) VALUES (\'kavin@gmail.com\', \'kavin\', 1905023, \'kavin123\');'))
         s=cur.fetchall()
 
         cur.close()
 
         username=request.form['username']
         password=request.form['password']
-        print(s)
         check=False
         for st in s:
 
